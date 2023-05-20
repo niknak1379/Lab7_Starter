@@ -19,6 +19,7 @@ self.addEventListener('install', function (event) {
       ]);
     })
   );
+  console.log('installeddd');
 });
 
 // Activates the service worker
@@ -44,11 +45,15 @@ self.addEventListener('fetch', function (event) {
   // B8. TODO - If the request is in the cache, return with the cached version.
   //            Otherwise fetch the resource, add it to the cache, and return
   //            network response.
+  console.log('from fetch');
+  console.log(event.request);
+  
   event.respondWith(caches.open(CACHE_NAME).then((cache) => {
     // Go to the cache first
-    return cache.match(event.request.url).then((cachedResponse) => {
+    return cache.match(event.request).then((cachedResponse) => {
       // Return a cached response if we have one
       if (cachedResponse) {
+        console.log('return cached');
         return cachedResponse;
       }
 
@@ -56,10 +61,11 @@ self.addEventListener('fetch', function (event) {
       return fetch(event.request).then((fetchedResponse) => {
         // Add the network response to the cache for later visits
         cache.put(event.request, fetchedResponse.clone());
-
+        console.log(event.request);
         // Return the network response
         return fetchedResponse;
       });
     });
   }));
+  
 });
